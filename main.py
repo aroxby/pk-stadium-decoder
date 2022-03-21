@@ -2,26 +2,112 @@
 import struct
 
 
-class Rental:
+class RentalDecoder:
     def __init__(self, rom_bytes):
         self.bytes = rom_bytes
 
-    @property
-    def name(self):
-        NAME_OFFSET = 48
-        MAX_NAME = 11
-        TEXT_TERMINATOR = '\0'
-        name_bytes = self.bytes[NAME_OFFSET:NAME_OFFSET + MAX_NAME]
-        name = name_bytes.decode('utf-8').split(TEXT_TERMINATOR)[0]
-        return name
+    def _unpack_nibbles(self, offset, count):
+        count_bytes = int(count/2 + 0.5)
+        data_bytes = self.bytes[offset:offset + count_bytes]
+        read_bytes = struct.unpack('>' + 'B' * count_bytes, data_bytes)
+        read_nibbles = []
+        for read_byte in read_bytes:
+            read_nibbles.append(read_byte & 0x0F)
+            read_byte >>= 4
+            read_nibbles.append(read_byte & 0x0F)
+        nibbles = tuple(read_nibbles[:count])
+        return nibbles
+
+    def _unpack_bytes(self, offset, count):
+        val_bytes = self.bytes[offset:offset + count]
+        vals = struct.unpack('>' + 'B' * count, val_bytes)
+        return vals
+
+    def _unpack_byte(self, offset):
+        return self._unpack_bytes(offset, 1)[0]
+
+    def _unpack_shorts(self, offset, count):
+        val_bytes = self.bytes[offset:offset + count * 2]
+        vals = struct.unpack('>' + 'H' * count, val_bytes)
+        return vals
+
+    def _unpack_short(self, offset):
+        return self._unpack_shorts(offset, 1)[0]
+
+    def _unpack_longs(self, offset, count):
+        val_bytes = self.bytes[offset:offset + count * 4]
+        vals = struct.unpack('>' + 'L' * count, val_bytes)
+        return vals
+
+    def _unpack_long(self, offset):
+        return self._unpack_longs(offset, 1)[0]
+
+    def _unpack_string(self, offset):
+        MAX_LEN = 11  # Common to generation
+        TEXT_TERMINATOR = '\0'  # Common to rom family
+        val_bytes = self.bytes[offset:offset + MAX_LEN]
+        val = val_bytes.decode('utf-8').split(TEXT_TERMINATOR)[0]
+        return val
 
     @property
     def pokdex(self):
-        ID_OFFSET = 0
-        ID_SIZE = 1
-        id_bytes = self.bytes[ID_OFFSET:ID_OFFSET + ID_SIZE]
-        id_val = struct.unpack('>B', id_bytes)[0]
-        return id_val
+        OFFSET = 0
+        return self._unpack_byte(OFFSET)
+
+    @property
+    def level(self):
+        OFFSET = 4
+        return self._unpack_byte(OFFSET)
+
+    @property
+    def types(self):
+        OFFSET = 6
+        return self._unpack_bytes(OFFSET, 2)
+
+    @property
+    def moves(self):
+        OFFSET = 9
+        return self._unpack_bytes(OFFSET, 4)
+
+    @property
+    def trainer_id(self):
+        OFFSET = 14
+        return self._unpack_short(OFFSET)
+
+    @property
+    def experience(self):
+        OFFSET = 16
+        return self._unpack_long(OFFSET)
+
+    @property
+    def stat_exp(self):
+        OFFSET = 20
+        return self._unpack_shorts(OFFSET, 5)
+
+    @property
+    def ivs(self):
+        OFFSET = 30
+        return self._unpack_nibbles(OFFSET, 4)
+
+    @property
+    def pps(self):
+        OFFSET = 32
+        return self._unpack_bytes(OFFSET, 4)
+
+    @property
+    def stats(self):
+        OFFSET = 38
+        return self._unpack_shorts(OFFSET, 5)
+
+    @property
+    def nickname(self):
+        OFFSET = 48
+        return self._unpack_string(OFFSET)
+
+    @property
+    def trainer_name(self):
+        OFFSET = 59
+        return self._unpack_string(OFFSET)
 
 
 def load_z64_pika_rentals(rom_file):
@@ -35,7 +121,7 @@ def load_z64_pika_rentals(rom_file):
     assert 0 < num_rentals < 151, f'found {num_rentals} rentals'
 
     rentals = tuple(
-        Rental(rom_file.read(RENTAL_LENGTH)) for _ in range(num_rentals)
+        RentalDecoder(rom_file.read(RENTAL_LENGTH)) for _ in range(num_rentals)
     )
 
     return rentals
@@ -47,7 +133,7 @@ def main():
     print(len(rentals), 'rentals')
     for rental in rentals[:5]:
         print(rental.pokdex)
-        print(rental.name)
+        print(rental.nickname)
 
 
 if __name__ == '__main__':
