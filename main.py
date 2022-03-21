@@ -1,5 +1,28 @@
 #!/usr/bin/env python3
+from dataclasses import dataclass
 import struct
+
+
+@dataclass
+class Stats:
+    hp: int
+    attack: int
+    denfense: int
+    speed: int
+    special: int
+
+
+@dataclass
+class Pokemon:
+    pokdex: int
+    level: int
+    types: tuple[int, int]  # TODO: Enum?
+    moves: tuple[int, int, int, int]  # TODO: Enum?
+    exp: int
+    stat_exp: Stats
+    pp: tuple[int, int, int, int]
+    stats: Stats
+    nickname: str
 
 
 class RentalDecoder:
