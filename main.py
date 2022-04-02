@@ -191,7 +191,7 @@ def load_z64_pika_rentals(rom_file):
 
 
 def main():
-    with open('rev2.z64', 'rb') as rom_file:
+    with open('a2dc9d1.z64', 'rb') as rom_file:
         rentals = load_z64_pika_rentals(rom_file)
     print(len(rentals), 'rentals')
     for rental in rentals:
