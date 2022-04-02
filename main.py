@@ -69,8 +69,13 @@ class RentalDecoder:
         MAX_LEN = 11  # Common to generation
         TEXT_TERMINATOR = '\0'  # Common to rom family
         val_bytes = self.bytes[offset:offset + MAX_LEN]
-        val = val_bytes.decode('utf-8').split(TEXT_TERMINATOR)[0]
+        val = val_bytes.decode('ISO-8859-1').split(TEXT_TERMINATOR)[0]
+        val = self._fix_string_symbols(val)
         return val
+
+    @staticmethod
+    def _fix_string_symbols(val):
+        return val.replace('¾', '♀').replace('©', '♂')
 
     @property
     def pokdex(self):
