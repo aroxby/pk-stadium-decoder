@@ -137,6 +137,40 @@ class RentalDecoder:
         OFFSET = 59
         return self._unpack_string(OFFSET)
 
+    @staticmethod
+    def _create_stats_obj(stat_vals):
+        stats = Stats(
+            hp=stat_vals[0],
+            attack=stat_vals[1],
+            denfense=stat_vals[2],
+            speed=stat_vals[3],
+            special=stat_vals[4],
+        )
+        return stats
+
+    def create_stat_exp(self):
+        stat_exp_vals = self.stat_exp
+        return self._create_stats_obj(stat_exp_vals)
+
+    def create_stats(self):
+        stat_vals = self.stats
+        return self._create_stats_obj(stat_vals)
+
+    def create_pokemon(self):
+        pokemon = Pokemon(
+            pokdex=self.pokdex,
+            level=self.level,
+            types=self.types,
+            moves=self.moves,
+            exp=self.experience,
+            stat_exp=self.create_stat_exp(),
+            pp=self.pps,
+            stats=self.create_stats(),
+            nickname=self.nickname,
+        )
+        return pokemon
+
+
 
 def load_z64_pika_rentals(rom_file):
     OFFSET = 0x8A7350  # 0x008A6480 for Petit Cup
@@ -149,7 +183,8 @@ def load_z64_pika_rentals(rom_file):
     assert 0 < num_rentals < 151, f'found {num_rentals} rentals'
 
     rentals = tuple(
-        RentalDecoder(rom_file.read(RENTAL_LENGTH)) for _ in range(num_rentals)
+        RentalDecoder(rom_file.read(RENTAL_LENGTH)).create_pokemon()
+        for _ in range(num_rentals)
     )
 
     return rentals
