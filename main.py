@@ -194,8 +194,7 @@ def main():
     with open('rev2.z64', 'rb') as rom_file:
         rentals = load_z64_pika_rentals(rom_file)
     print(len(rentals), 'rentals')
-    for rental in rentals[:5]:
-        print(rental.pokdex)
+    for rental in rentals:
         print(rental.nickname)
 
 
