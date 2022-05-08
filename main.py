@@ -3,6 +3,14 @@ from dataclasses import dataclass
 import struct
 
 
+class CONSTANTS:
+    class RENTAL_OFFSETS:
+        class PIKA:
+            Z64 = 0x8A7350
+        class PETIT:
+            Z64 = 0x8A6480
+
+
 @dataclass
 class Stats:
     hp: int
@@ -171,13 +179,11 @@ class RentalDecoder:
         return pokemon
 
 
-
-def load_z64_pika_rentals(rom_file):
-    OFFSET = 0x8A7350  # 0x008A6480 for Petit Cup
+def load_rentals(rom_file, offset):
     RENTAL_HEADER_LENGTH = 4
     RENTAL_LENGTH = 0x43 + 0x11  # Struct length + padding?
 
-    rom_file.seek(OFFSET)
+    rom_file.seek(offset)
     rental_header_bytes = rom_file.read(RENTAL_HEADER_LENGTH)
     num_rentals = struct.unpack('>L', rental_header_bytes)[0]
     assert 0 < num_rentals < 151, f'found {num_rentals} rentals'
@@ -192,7 +198,7 @@ def load_z64_pika_rentals(rom_file):
 
 def main():
     with open('a2dc9d1.z64', 'rb') as rom_file:
-        rentals = load_z64_pika_rentals(rom_file)
+        rentals = load_rentals(rom_file, CONSTANTS.RENTAL_OFFSETS.PIKA.Z64)
     print(len(rentals), 'rentals')
     for rental in rentals:
         print(rental.nickname)
