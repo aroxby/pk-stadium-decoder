@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from dataclasses import dataclass
+from enum import Enum
 import struct
 
 
@@ -9,6 +10,25 @@ class CONSTANTS:
             Z64 = 0x8A7350
         class PETIT:
             Z64 = 0x8A6480
+
+
+class Type(Enum):
+    NORMAL = 0
+    FIGHTING = 1
+    FLYING = 2
+    POISON = 3
+    GROUND = 4
+    ROCK = 5
+    BIRD = 6
+    BUG = 7
+    GHOST = 8
+    FIRE = 20
+    WATER = 21
+    GRASS = 22
+    ELECTRIC = 23
+    PSYCHIC = 24
+    ICE = 25
+    DRAGON = 26
 
 
 @dataclass
@@ -24,7 +44,7 @@ class Stats:
 class Pokemon:
     pokdex: int
     level: int
-    types: tuple[int, int]  # TODO: Enum?
+    types: tuple[Type, Type]
     moves: tuple[int, int, int, int]  # TODO: Enum?
     exp: int
     stat_exp: Stats
@@ -98,7 +118,9 @@ class RentalDecoder:
     @property
     def types(self):
         OFFSET = 6
-        return self._unpack_bytes(OFFSET, 2)
+        type_ids = self._unpack_bytes(OFFSET, 2)
+        types = tuple(Type(type_id) for type_id in type_ids)
+        return types
 
     @property
     def moves(self):
