@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 import struct
 
-from pokemon_data import Type
+from pokemon_data import Move, Type
 
 
 class CONSTANTS:
@@ -27,7 +27,7 @@ class Pokemon:
     pokdex: int
     level: int
     types: tuple[Type, Type]
-    moves: tuple[int, int, int, int]  # TODO: Enum?
+    moves: tuple[Move, Move, Move, Move]
     exp: int
     stat_exp: Stats
     pp: tuple[int, int, int, int]
@@ -107,7 +107,9 @@ class RentalDecoder:
     @property
     def moves(self):
         OFFSET = 9
-        return self._unpack_bytes(OFFSET, 4)
+        move_ids = self._unpack_bytes(OFFSET, 4)
+        moves = tuple(Move(move_id) for move_id in move_ids)
+        return moves
 
     @property
     def trainer_id(self):
