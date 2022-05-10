@@ -5,12 +5,26 @@ import struct
 from pokemon_data import Move, Type
 
 
+def mem_to_z64(addr):
+    # Offset found by guess and check may vary between roms
+    return addr - 0x3000
+
+
 class CONSTANTS:
     class RENTAL_OFFSETS:
-        class PIKA:
-            Z64 = 0x8A7350
+        # Source: https://datacrystal.romhacking.net/wiki/Pok%C3%A9mon_Stadium:ROM_map
         class PETIT:
-            Z64 = 0x8A6480
+            Z64 = mem_to_z64(0x8A9480)
+        class PIKA:
+            Z64 = mem_to_z64(0x8AA350)
+        class PRIME_R1:
+            Z64 = mem_to_z64(0x8AC130)
+        class POKE:
+            Z64 = mem_to_z64(0x8AF220)
+        class GYMS:
+            Z64 = mem_to_z64(0x8B2780)
+        class PRIME_R2:
+            Z64 = mem_to_z64(0x8C6900)
 
 
 @dataclass
