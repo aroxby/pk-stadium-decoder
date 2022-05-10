@@ -34,6 +34,35 @@ class Pokemon:
     stats: Stats
     nickname: str
 
+    def as_dict(self):
+        data = {
+            'Pokedex Number': self.pokdex,
+            'Level': self.level,
+            'Type 1': str(self.types[0]),
+            'Type 2': str(self.types[1]),
+            'Move 1': str(self.moves[0]),
+            'Move 2': str(self.moves[1]),
+            'Move 3': str(self.moves[2]),
+            'Move 4': str(self.moves[3]),
+            'Exp': self.exp,
+            'HP Stat Exp': self.stat_exp.hp,
+            'Attack Stat Exp': self.stat_exp.attack,
+            'Defense Stat Exp': self.stat_exp.denfense,
+            'Speed Stat Exp': self.stat_exp.speed,
+            'Special Stat Exp': self.stat_exp.special,
+            'PP Move 1': self.pp[0],
+            'PP Move 2': self.pp[1],
+            'PP Move 3': self.pp[2],
+            'PP Move 4': self.pp[3],
+            'HP': self.stats.hp,
+            'Attack': self.stats.attack,
+            'Defense': self.stats.denfense,
+            'Speed': self.stats.speed,
+            'Special': self.stats.special,
+            'Nickname': self.nickname.title(),
+        }
+        return data
+
 
 class RentalDecoder:
     def __init__(self, rom_bytes):
@@ -206,8 +235,7 @@ def main():
     with open('a2dc9d1.z64', 'rb') as rom_file:
         rentals = load_rentals(rom_file, CONSTANTS.RENTAL_OFFSETS.PIKA.Z64)
     print(len(rentals), 'rentals')
-    for rental in rentals:
-        print(rental.nickname)
+    print(rentals[0].as_dict())
 
 
 if __name__ == '__main__':
