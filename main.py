@@ -2,6 +2,8 @@
 from dataclasses import dataclass
 import struct
 
+import xlsxwriter
+
 from pokemon_data import Move, Type
 
 
@@ -245,11 +247,19 @@ def load_rentals(rom_file, offset):
     return rentals
 
 
+def write_worksheet(sheetname, data, workbook):
+    worksheet = workbook.add_worksheet(sheetname)
+    bold_format = workbook.add_format({'bold': True})
+    worksheet.write_row(0, 0, data[0].keys(), bold_format)
+    for i, row_data in enumerate(data, 1):
+        worksheet.write_row(i, 0, row_data.values())
+
+
 def main():
     with open('a2dc9d1.z64', 'rb') as rom_file:
         rentals = load_rentals(rom_file, CONSTANTS.RENTAL_OFFSETS.PIKA.Z64)
-    print(len(rentals), 'rentals')
-    print(rentals[0].as_dict())
+    with xlsxwriter.Workbook('test.xlsx') as workbook:
+        write_worksheet('pika', tuple(rental.as_dict() for rental in rentals), workbook)
 
 
 if __name__ == '__main__':
