@@ -24,6 +24,7 @@ class Type(Enum):
         MAPPING = {
             self.BIRD: 'Bird',
             self.BUG: 'Bug',
+            self.DRAGON: 'Dragon',
             self.ELECTRIC: 'Electric',
             self.FIGHTING: 'Fighting',
             self.FIRE: 'Fire',
