@@ -256,10 +256,23 @@ def write_worksheet(sheetname, data, workbook):
 
 
 def main():
+    sheets_to_create = {
+        'Pika Cup': CONSTANTS.RENTAL_OFFSETS.PIKA.Z64,
+        'Petit Cup': CONSTANTS.RENTAL_OFFSETS.PETIT.Z64,
+        'Poke Cup': CONSTANTS.RENTAL_OFFSETS.POKE.Z64,
+        # TODO: Are the rentals for both rounds the same?
+        'Prime Cup (Round 1)': CONSTANTS.RENTAL_OFFSETS.PRIME_R1.Z64,
+        'Prime Cup (Round 2)': CONSTANTS.RENTAL_OFFSETS.PRIME_R2.Z64,
+        'Gym Leader Castle': CONSTANTS.RENTAL_OFFSETS.GYMS.Z64,
+    }
+
     with open('a2dc9d1.z64', 'rb') as rom_file:
-        rentals = load_rentals(rom_file, CONSTANTS.RENTAL_OFFSETS.PIKA.Z64)
-    with xlsxwriter.Workbook('test.xlsx') as workbook:
-        write_worksheet('pika', tuple(rental.as_dict() for rental in rentals), workbook)
+        with xlsxwriter.Workbook('Pokemon Stadium Rentals.xlsx') as workbook:
+            for sheet_name, rental_offset in sheets_to_create.items():
+                rentals = load_rentals(rom_file, rental_offset)
+                write_worksheet(
+                    sheet_name, tuple(rental.as_dict() for rental in rentals), workbook
+                )
 
 
 if __name__ == '__main__':
