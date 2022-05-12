@@ -260,9 +260,8 @@ def main():
         'Pika Cup': CONSTANTS.RENTAL_OFFSETS.PIKA.Z64,
         'Petit Cup': CONSTANTS.RENTAL_OFFSETS.PETIT.Z64,
         'Poke Cup': CONSTANTS.RENTAL_OFFSETS.POKE.Z64,
-        # TODO: Are the rentals for both rounds the same?
-        'Prime Cup (Round 1)': CONSTANTS.RENTAL_OFFSETS.PRIME_R1.Z64,
-        'Prime Cup (Round 2)': CONSTANTS.RENTAL_OFFSETS.PRIME_R2.Z64,
+        # The only difference between rounds is that mew is available
+        'Prime Cup': CONSTANTS.RENTAL_OFFSETS.PRIME_R2.Z64,
         'Gym Leader Castle': CONSTANTS.RENTAL_OFFSETS.GYMS.Z64,
     }
 
